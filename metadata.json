@@ -1,0 +1,5 @@
+{
+  "name": "Awizacje Monitor Pro",
+  "description": "System wizualizacji awizacji w czasie rzeczywistym. Symuluje pobieranie danych z SharePoint i wykorzystuje Gemini AI do analizy harmonogramu dostaw.",
+  "requestFramePermissions": []
+}

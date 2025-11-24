@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awizacje Monitor Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#0f172a', // Slate 900
+              secondary: '#334155', // Slate 700
+              accent: '#3b82f6', // Blue 500
+              success: '#10b981', // Emerald 500
+              warning: '#f59e0b', // Amber 500
+              danger: '#ef4444', // Red 500
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.2s ease-out',
+              'fade-in-up': 'fadeInUp 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px) scale(0.98)' },
+                '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f1f5f9;
+      }
+      /* Custom scrollbar for better aesthetics */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      /* GLOBAL PRINT STYLES */
+      @media print {
+        @page {
+          size: landscape;
+          margin: 0.5cm;
+        }
+
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+          background-color: white !important;
+        }
+
+        /* Hide Scrollbars */
+        ::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* 
+           MODAL PRINTING LOGIC:
+           If we are printing via the "Print/PDF" button in the modal, 
+           we want to hide everything except the modal.
+           We use the visibility trick because 'display: none' on parents hides children 
+           regardless of children's display property.
+        */
+        body * {
+          visibility: hidden;
+        }
+        
+        #modal-root, #modal-root * {
+          visibility: visible;
+        }
+        
+        #modal-root {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: auto;
+          overflow: visible !important;
+          background: white;
+        }
+
+        /* Charts Fix: Ensure SVG charts scale correctly */
+        .recharts-wrapper {
+          width: 100% !important;
+          height: auto !important;
+          overflow: visible !important;
+        }
+        
+        .recharts-surface {
+          overflow: visible !important;
+        }
+
+        /* Hide UI buttons/inputs that shouldn't appear on paper even if inside modal */
+        button, input, select, .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "recharts": "https://esm.sh/recharts@2.15.0?external=react,react-dom",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <div id="modal-root"></div>
+  </body>
+</html>
