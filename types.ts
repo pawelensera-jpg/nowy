@@ -17,7 +17,7 @@ export interface DeliveryItem {
   isArrived: boolean; // "Tak / Nie" - requires 10s refresh
   arrivalTimestamp?: number; // Added field
   createdLocal: string; // "Created - Local"
-  type: 'Dostawa' | 'Odbiór' | 'Załadunek' | 'Rozładunek'; // Expanded types
+  type: 'Dostawa' | 'Odbiór' | 'Załadunek' | 'Rozładunek' | 'Kurier'; // Expanded types
   rampId: string;    // Assigned for visualization
   status?: DeliveryStatus; // Added field
 }

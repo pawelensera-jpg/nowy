@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { DeliveryItem } from '../types';
 import { 
@@ -15,6 +16,28 @@ interface Props {
 }
 
 const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444'];
+
+const CustomLegend = ({ payload }: any) => {
+    if (!payload) return null;
+    return (
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 border-t border-slate-100 pt-4">
+        {payload.map((entry: any, index: number) => (
+          <div key={`legend-${index}`} className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full shadow-sm ring-1 ring-black/5" 
+              style={{ backgroundColor: entry.color }} 
+            />
+            <span className="text-xs font-bold text-slate-700">
+              {entry.value}
+            </span>
+            <span className="text-xs text-slate-400 font-mono bg-slate-100 px-1.5 py-0.5 rounded">
+               {entry.payload.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+};
 
 export const StatisticsModal: React.FC<Props> = ({ isOpen, onClose, historyData, currentDeliveries }) => {
   if (!isOpen) return null;
@@ -64,7 +87,10 @@ export const StatisticsModal: React.FC<Props> = ({ isOpen, onClose, historyData,
   };
 
   const handleExportPDF = () => {
-     window.print();
+     // Small timeout to ensure rendering is complete before print dialog
+     setTimeout(() => {
+         window.print();
+     }, 100);
   };
 
   // We use a Portal to render the modal at the root level to avoid z-index/overflow issues during print
@@ -142,10 +168,10 @@ export const StatisticsModal: React.FC<Props> = ({ isOpen, onClose, historyData,
                 </div>
 
                  {/* Distribution Chart */}
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-80 print:h-auto print:border-black print:break-before-auto">
-                    <h3 className="font-bold text-slate-700 mb-6">Struktura Operacji</h3>
-                    <div className="flex-grow">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-auto min-h-[320px] print:h-auto print:border-black print:break-before-auto">
+                    <h3 className="font-bold text-slate-700 mb-2">Struktura Operacji</h3>
+                    <div className="flex-grow relative">
+                        <ResponsiveContainer width="100%" height={260}>
                             <PieChart>
                                 <Pie
                                     data={stats.gateData}
@@ -160,8 +186,10 @@ export const StatisticsModal: React.FC<Props> = ({ isOpen, onClose, historyData,
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
-                                <Legend verticalAlign="bottom" height={36}/>
+                                <Tooltip 
+                                    contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                                />
+                                <Legend content={<CustomLegend />} />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>

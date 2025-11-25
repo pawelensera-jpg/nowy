@@ -1,11 +1,14 @@
+
 import React, { useState } from 'react';
-import { DeliveryItem } from '../types';
+import { DeliveryItem, DeliveryStatus } from '../types';
 
 interface Props {
   delivery: DeliveryItem;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedDelivery: DeliveryItem) => void;
+  onDelete?: (id: string) => void;
+  isAdmin?: boolean;
 }
 
 interface Errors {
@@ -15,9 +18,10 @@ interface Errors {
   rampId?: string;
 }
 
-export const EditDeliveryModal: React.FC<Props> = ({ delivery, isOpen, onClose, onSave }) => {
+export const EditDeliveryModal: React.FC<Props> = ({ delivery, isOpen, onClose, onSave, onDelete, isAdmin = false }) => {
   const [formData, setFormData] = useState<DeliveryItem>({ ...delivery });
   const [errors, setErrors] = useState<Errors>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   if (!isOpen) return null;
 
@@ -100,12 +104,21 @@ export const EditDeliveryModal: React.FC<Props> = ({ delivery, isOpen, onClose, 
     }
   };
 
+  const handleDeleteClick = () => {
+      if (showDeleteConfirm && onDelete) {
+          onDelete(formData.id);
+          onClose();
+      } else {
+          setShowDeleteConfirm(true);
+      }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden animate-fade-in-up">
-        <div className="bg-sky-700 px-4 py-3 flex justify-between items-center text-white">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md overflow-hidden animate-fade-in-up transition-colors">
+        <div className="bg-sky-700 dark:bg-sky-900 px-4 py-3 flex justify-between items-center text-white">
           <h3 className="font-bold">Edycja Awizacji #{formData.originalId}</h3>
-          <button onClick={onClose} className="hover:bg-sky-600 rounded p-1">
+          <button onClick={onClose} className="hover:bg-sky-600 dark:hover:bg-sky-800 rounded p-1">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -114,50 +127,50 @@ export const EditDeliveryModal: React.FC<Props> = ({ delivery, isOpen, onClose, 
         
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Firma</label>
+            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Firma</label>
             <input
               type="text"
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
-              className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 ${errors.companyName ? 'border-red-500' : 'border-gray-300'}`}
+              className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:focus:border-sky-400 ${errors.companyName ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.companyName && <span className="text-xs text-red-500 mt-1">{errors.companyName}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Godzina (HH:MM)</label>
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Godzina (HH:MM)</label>
               <input
                 type="text"
                 name="time"
                 placeholder="HH:MM"
                 value={formData.time}
                 onChange={handleChange}
-                className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 ${errors.time ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:focus:border-sky-400 ${errors.time ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.time && <span className="text-xs text-red-500 mt-1">{errors.time}</span>}
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Rejestracja</label>
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Rejestracja</label>
               <input
                 type="text"
                 name="plateNumber"
                 value={formData.plateNumber}
                 onChange={handleChange}
-                className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 ${errors.plateNumber ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:focus:border-sky-400 ${errors.plateNumber ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.plateNumber && <span className="text-xs text-red-500 mt-1">{errors.plateNumber}</span>}
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Brama</label>
+            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Brama</label>
             <select
               name="rampId"
               value={formData.rampId}
               onChange={handleChange}
-              className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 ${errors.rampId ? 'border-red-500' : 'border-gray-300'}`}
+              className={`w-full border rounded px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:border-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:focus:border-sky-400 ${errors.rampId ? 'border-red-500' : 'border-gray-300'}`}
             >
               <option value="">-- Wybierz Bramę --</option>
               <option value="Brama W1">Brama W1 (Kurier)</option>
@@ -172,43 +185,82 @@ export const EditDeliveryModal: React.FC<Props> = ({ delivery, isOpen, onClose, 
           </div>
           
            <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Status</label>
+            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Status</label>
              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input 
                         type="radio" 
-                        name="isArrived" 
-                        checked={!formData.isArrived} 
-                        onChange={() => setFormData(prev => ({...prev, isArrived: false, status: undefined}))}
+                        name="statusOption" 
+                        checked={!formData.isArrived && formData.status !== DeliveryStatus.COMPLETED} 
+                        onChange={() => setFormData(prev => ({
+                            ...prev, 
+                            isArrived: false, 
+                            status: DeliveryStatus.PENDING,
+                            arrivalTimestamp: undefined // Clear timestamp when pending
+                        }))}
+                        className="text-sky-600 focus:ring-sky-500"
                     />
-                    <span className="text-sm text-gray-800">Oczekuje</span>
+                    <span className="text-sm text-gray-800 dark:text-gray-200">Oczekuje</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input 
                         type="radio" 
-                        name="isArrived" 
-                        checked={formData.isArrived} 
-                        onChange={() => setFormData(prev => ({...prev, isArrived: true, arrivalTimestamp: prev.arrivalTimestamp || Date.now()}))}
+                        name="statusOption" 
+                        checked={formData.isArrived && formData.status !== DeliveryStatus.COMPLETED} 
+                        onChange={() => setFormData(prev => ({
+                            ...prev, 
+                            isArrived: true, 
+                            status: DeliveryStatus.ARRIVED,
+                            arrivalTimestamp: prev.arrivalTimestamp || Date.now() 
+                        }))}
+                        className="text-emerald-600 focus:ring-emerald-500"
                     />
-                    <span className="text-sm text-gray-800">Na placu</span>
+                    <span className="text-sm text-gray-800 dark:text-gray-200">Na placu</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input 
+                        type="radio" 
+                        name="statusOption" 
+                        checked={formData.status === DeliveryStatus.COMPLETED} 
+                        onChange={() => setFormData(prev => ({
+                            ...prev, 
+                            isArrived: false, 
+                            status: DeliveryStatus.COMPLETED
+                        }))}
+                        className="text-gray-600 focus:ring-gray-500"
+                    />
+                    <span className="text-sm text-gray-800 dark:text-gray-200">OUT (Koniec)</span>
                 </label>
              </div>
           </div>
 
-          <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded"
-            >
-              Anuluj
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm bg-sky-600 text-white hover:bg-sky-700 rounded shadow-sm font-medium"
-            >
-              Zapisz Zmiany
-            </button>
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100 dark:border-slate-700">
+            <div>
+                {isAdmin && onDelete && (
+                    <button
+                        type="button"
+                        onClick={handleDeleteClick}
+                        className={`px-3 py-2 text-xs font-bold text-white rounded shadow-sm transition-colors ${showDeleteConfirm ? 'bg-red-600 hover:bg-red-700' : 'bg-slate-400 hover:bg-red-500'}`}
+                    >
+                        {showDeleteConfirm ? "POTWIERDŹ USUWANIE" : "USUŃ AWIZACJĘ"}
+                    </button>
+                )}
+            </div>
+            <div className="flex gap-2">
+                <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded dark:text-gray-300 dark:hover:bg-slate-700"
+                >
+                Anuluj
+                </button>
+                <button
+                type="submit"
+                className="px-4 py-2 text-sm bg-sky-600 text-white hover:bg-sky-700 rounded shadow-sm font-medium dark:bg-sky-700 dark:hover:bg-sky-600"
+                >
+                Zapisz Zmiany
+                </button>
+            </div>
           </div>
         </form>
       </div>
